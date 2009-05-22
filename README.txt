@@ -4,7 +4,32 @@
 
 == DESCRIPTION:
 
-FIX (describe your package)
+account = Posterous.new('info@gluenow.com', 'Password1')
+account = Posterous.new('info@gluenow.com', 'Password1', 68710)
+account = Posterous.new('info@gluenow.com', 'Password1', '68710')
+
+account.valid_user?
+account.has_site?
+account.title = "My Title"
+account.body  = "My Body Text"
+
+
+# URL
+http://posterous.com/api/newpost
+
+# FIELDS
+"site_id"     Optional. Id of the site to post to. If not supplied, posts to the user's default site
+"media"       Optional. File data. Multiple files OK
+"title"       Optional. Title of post
+"body"        Optional. Body of post
+"autopost"    Optional. 0 or 1.
+"private"     Optional. 0 or 1.
+"source"      Optional. The name of your application or website
+"sourceLink"  Optional. Link to your application or website
+ 
+# References 
+http://posterous.com/api/posting
+http://fakeweb.rubyforge.org/
 
 == FEATURES/PROBLEMS:
 

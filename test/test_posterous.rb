@@ -2,24 +2,27 @@ require 'test/unit'
 require 'posterous'
 require 'fakeweb'
 
-module FakeWeb
-  class Registry
-    alias :normalize_uri_org :normalize_uri
-    def normalize_uri(uri)
-      # I'm thinking I need to remove basic auth that FakeWeb dies on
-      normalize_uri_org("http://" + uri.to_s.gsub(/^.+@/, ""))
-    end
-  end
-end
+# module FakeWeb
+#   class Registry
+#     alias :normalize_uri_org :normalize_uri
+#     def normalize_uri(uri)
+#       # I'm thinking I need to remove basic auth that FakeWeb dies on
+#       # normalize_uri_org("http://" + uri.to_s.gsub(/^.+@/, ""))
+#     end
+#   end
+# end
 
 class TestPosterous < Test::Unit::TestCase
 
  FakeWeb.allow_net_connect = false
   
   def setup
-    # Neither seem to help 
-    FakeWeb.register_uri("http://posterous.com:80/api/getsites?", :response => "#{File.dirname(__FILE__)}/files/response_for_getsites.txt")
-    FakeWeb.register_uri("http://jordandobson@gamil.com:password@posterous.com:80/api/getsites?", :response => "#{File.dirname(__FILE__)}/files/response_for_getsites.txt")
+    # This doesn't help
+    FakeWeb.register_uri(:post, "http://posterous.com:80/api/getsites?", \
+      :response => "#{File.dirname(__FILE__)}/files/response_for_getsites.txt")
+    # Nor does this      
+    FakeWeb.register_uri("http://jordandobson@gamil.com:password@posterous.com:80/api/getsites?", \
+      :response => "#{File.dirname(__FILE__)}/files/response_for_getsites.txt")
   end
 
   def test_raises_if_username_is_blank
