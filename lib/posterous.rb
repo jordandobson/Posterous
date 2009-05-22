@@ -5,7 +5,7 @@ class PosterousAuthError < StandardError; end
 
 class Posterous
   VERSION     = '0.1.0'
-  DOMAIN      = 'posterous.com:80'
+  DOMAIN      = 'posterous.com'
   POST_PATH   = '/api/newpost'
   AUTH_PATH   = '/api/getsites'
   SOURCE      = 'Glue'
@@ -18,8 +18,8 @@ class Posterous
   attr_accessor :title, :body, :site_id
   
   def initialize user, pass, site_id = false
-    raise PosterousAuthError, 'Either Username or Password is blank and/or not a string.' if !user.is_a?(String) || \
-      !pass.is_a?(String) || user == "" || pass == "" 
+    raise PosterousAuthError, 'Either Username or Password is blank and/or not a string.' if \
+      !user.is_a?(String) || !pass.is_a?(String) || user == "" || pass == "" 
     self.class.basic_auth user, pass
     @site_id = site_id ? site_id.to_s : site_id
   end
@@ -48,7 +48,8 @@ class Posterous
   end
   
   def add_post
-    self.class.post(POST_PATH, :query => {:site_id => @site_id, :title => @title, :body => @body, :source => SOURCE, :sourceLink => SOURCELINK})
+    self.class.post(POST_PATH, :query => {
+      :site_id => @site_id, :title => @title, :body => @body, :source => SOURCE, :sourceLink => SOURCELINK})
   end
   
 end
