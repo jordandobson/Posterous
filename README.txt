@@ -30,6 +30,7 @@ http://posterous.com/api/newpost
 # References 
 http://posterous.com/api/posting
 http://fakeweb.rubyforge.org/
+http://github.com/jnunemaker/httparty/tree/master
 
 == FEATURES/PROBLEMS:
 
