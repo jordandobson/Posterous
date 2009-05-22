@@ -1,0 +1,23 @@
+HTTP/1.1 200 OK
+Server: nginx/0.6.35
+Date: Fri, 22 May 2009 01:43:06 GMT
+Content-Type: application/xml; charset=utf-8
+Connection: keep-alive
+Set-Cookie: _sharebymail_session_id=2eb588fb83390b48abeff69175a64675; domain=.posterous.com; path=/
+Status: 200 OK
+X-Runtime: 8ms
+ETag: "2015e1477db5bf4f461dac64f10b658c"
+Cache-Control: private, max-age=0, must-revalidate
+Content-Length: 127
+
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+ <site>
+  <name>glue's posterous</name>
+  <private>false</private>
+  <url>http://glue.posterous.com</url>
+  <id>86710</id>
+ </site> 
+</rsp>
+
+
