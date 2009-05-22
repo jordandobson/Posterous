@@ -1,8 +1,10 @@
 = posterous
 
-* FIX (url)
+http://github.com/jordandobson/Posterous/tree/master
 
 == DESCRIPTION:
+
+Class to post to Posterous. This code hopefully speaks for itself.
 
 account = Posterous.new('info@gluenow.com', 'Password1')
 account = Posterous.new('info@gluenow.com', 'Password1', 68710)
@@ -13,6 +15,13 @@ account.has_site?
 account.title = "My Title"
 account.body  = "My Body Text"
 
+== FEATURES/PROBLEMS:
+
+* Only posts text at the moment - no images
+
+== SYNOPSIS:
+
+Posterous API, HTTParty & FakeWeb Info
 
 # URL
 http://posterous.com/api/newpost
@@ -32,17 +41,10 @@ http://posterous.com/api/posting
 http://fakeweb.rubyforge.org/
 http://github.com/jnunemaker/httparty/tree/master
 
-== FEATURES/PROBLEMS:
-
-* FIX (list of features or problems)
-
-== SYNOPSIS:
-
-  FIX (code sample of usage)
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* HTTPparty & FakeWeb
 
 == INSTALL:
 
