@@ -26,11 +26,13 @@ class Posterous
 
   def valid_user?
     res = ping_account
+    return false unless res.is_a?(Hash)
     res["stat"] == "ok" ? true : false
   end
   
   def has_site?
     res = ping_account
+    return false unless res.is_a?(Hash)
     if res["site"].is_a?(Hash)        # Check for single site and a specific id if specified
       @site_id && @site_id == res["site"]["id"] || !@site_id ? true : false
     elsif res["site"].is_a?(Array)   # Check lists sites and that the specified site id is present
@@ -49,7 +51,7 @@ class Posterous
   
   def add_post
     self.class.post(POST_PATH, :query => {
-      :site_id => @site_id, :title => @title, :body => @body, :source => SOURCE, :sourceLink => SOURCELINK})
+      :site_id => @site_id, :title => @title, :body => @body, :source => SOURCE, :sourceLink => SOURCELINK}) if has_site?
   end
   
 end
