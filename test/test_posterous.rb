@@ -5,13 +5,13 @@ require 'fakeweb'
 
 class TestPosterous < Test::Unit::TestCase
 
+  # This makes sure we don't connect to the internet to test
   FakeWeb.allow_net_connect = false
 
   def setup
     @resp_ok = {"rsp"=>{"site"=>{"name"=>"ruby-posterous's posterous", "primary"=>"true", "private"=>"false", "url"=>"http://ruby-posterous.posterous.com", "id"=>"174966"}, "stat"=>"ok"}}
     @resp_fail = {"rsp"=>{"err"=>{"msg"=>"Invalid Posterous email or password", "code"=>"3001"}, "stat"=>"fail"}}
     @resp_ok_two_sites = {"rsp"=>{"site"=>[{"name"=>"ruby-posterous's posterous", "primary"=>"true", "private"=>"false", "url"=>"http://ruby-posterous.posterous.com", "id"=>"174966"}, {"name"=>"uw-ruby", "primary"=>"false", "private"=>"false", "url"=>"http://uwruby.posterous.com", "id"=>"175260"}], "stat"=>"ok"}}
-
   end
 
   def test_raises_if_username_is_blank
@@ -65,12 +65,12 @@ class TestPosterous < Test::Unit::TestCase
     assert_equal false, post.valid_user?
   end
 
-  def test_ping_authentication_response
+  def test_ping_authentication_success
     Posterous.stubs(:post).returns(@resp_ok)
     assert_equal @resp_ok, Posterous.new('jordandobson@gmail.com', 'password').ping_account
   end
   
-  def test_user_authentication_fail
+  def test_ping_authentication_fail
     Posterous.stubs(:post).returns(@resp_fail)
     assert_equal @resp_fail, Posterous.new('jordandobson@gmail.com', 'password').ping_account
   end
