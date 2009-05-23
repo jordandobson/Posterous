@@ -13,7 +13,7 @@ class Posterous
   # HTTParty Specific
   base_uri DOMAIN
 
-  attr_accessor :title, :body, :source, :source_link
+  attr_accessor :title, :body, :source, :source_url
   attr_reader   :site_id
 
   def initialize user, pass, site_id = false
@@ -54,7 +54,7 @@ class Posterous
 
   def add_post
     self.class.post(POST_PATH, :query => {
-      :site_id => @site_id, :title => @title, :body => @body, :source => @source, :sourceLink => @source_link}) if has_site?
+      :site_id => @site_id, :title => @title, :body => @body, :source => @source, :sourceLink => @source_url}) if has_site?
   end
 
 end

@@ -22,14 +22,16 @@ Posting images and pulling down your posts will be available soon. They were mad
 
 Posterous API, HTTParty & FakeWeb Info
 
-account = Posterous.new('info@gluenow.com', 'Password1')
-account = Posterous.new('info@gluenow.com', 'Password1', 68710)
-account = Posterous.new('info@gluenow.com', 'Password1', '68710')
+account = Posterous.new('email_address', 'password')
+account = Posterous.new('email_address', 'password', 68710)
+account = Posterous.new('email_address', 'password', '68710')
 
 account.valid_user?
 account.has_site?
 account.title = "My Title"
 account.body  = "My Body Text"
+account.source = "Glue"
+account.source_url  = "http://GlueNow.com"
 
 # URL
 http://posterous.com/api/newpost
