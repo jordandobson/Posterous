@@ -8,18 +8,17 @@ class Posterous
   DOMAIN      = 'posterous.com'
   POST_PATH   = '/api/newpost'
   AUTH_PATH   = '/api/getsites'
-  SOURCE      = 'Glue'
-  SOURCELINK  = 'http://GlueNow.com'
-  
+
   include HTTParty
   # HTTParty Specific
   base_uri DOMAIN
-  
-  attr_accessor :title, :body, :site_id
-  
+
+  attr_accessor :title, :body, :source, :source_link
+  attr_reader   :site_id
+
   def initialize user, pass, site_id = false
     raise PosterousAuthError, 'Either Username or Password is blank and/or not a string.' if \
-      !user.is_a?(String) || !pass.is_a?(String) || user == "" || pass == "" 
+      !user.is_a?(String) || !pass.is_a?(String) || user == "" || pass == ""
     self.class.basic_auth user, pass
     @site_id = site_id ? site_id.to_s : site_id
   end
@@ -30,6 +29,10 @@ class Posterous
     res["stat"] == "ok" ? true : false
   end
   
+  def get_primary_site
+    # Set the site_id to the primary account if multiple or to the only one that exists or raise
+  end
+
   def has_site?
     res = ping_account
     return false unless res.is_a?(Hash)
@@ -44,14 +47,14 @@ class Posterous
       false
     end
   end
-  
+
   def ping_account
     self.class.post(AUTH_PATH, :query => {})["rsp"]
   end
-  
+
   def add_post
     self.class.post(POST_PATH, :query => {
-      :site_id => @site_id, :title => @title, :body => @body, :source => SOURCE, :sourceLink => SOURCELINK}) if has_site?
+      :site_id => @site_id, :title => @title, :body => @body, :source => @source, :sourceLink => @source_link}) if has_site?
   end
-  
+
 end

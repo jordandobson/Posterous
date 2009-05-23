@@ -4,7 +4,23 @@ http://github.com/jordandobson/Posterous/tree/master
 
 == DESCRIPTION:
 
-Class to post to Posterous. This code hopefully speaks for itself.
+The Posterous gem provides posting to Posterous.com using your email, password, site id(if you have multiple sites) and your blog content. With this gem, you have access to post a title, body text, posting source and a source link to Posterous.
+
+Posting images and pulling down your posts will be available soon. They were made available a day before this was completed.
+
+== FEATURES/PROBLEMS:
+
+* All Fields are optional
+* Media, AutoPost & Private are not yet implemented
+* Posting Only, Reading & Images are not yet included
+* Allows you to see if a users email and password are valid
+* Allows you to check if a user has a valid site
+* Allows you to check if a specified site_id is valid for their account
+
+
+== SYNOPSIS:
+
+Posterous API, HTTParty & FakeWeb Info
 
 account = Posterous.new('info@gluenow.com', 'Password1')
 account = Posterous.new('info@gluenow.com', 'Password1', 68710)
@@ -14,14 +30,6 @@ account.valid_user?
 account.has_site?
 account.title = "My Title"
 account.body  = "My Body Text"
-
-== FEATURES/PROBLEMS:
-
-* Only posts text at the moment - no images
-
-== SYNOPSIS:
-
-Posterous API, HTTParty & FakeWeb Info
 
 # URL
 http://posterous.com/api/newpost
@@ -48,13 +56,13 @@ http://github.com/jnunemaker/httparty/tree/master
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* sudo gem install posterous Ñinclude-dependencies
 
 == LICENSE:
 
 (The MIT License)
 
-Copyright (c) 2009 FIX
+Copyright (c) 2009 Jordan Dobson
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
