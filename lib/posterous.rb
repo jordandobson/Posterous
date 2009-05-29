@@ -3,6 +3,7 @@ require 'httparty'
 require 'base64'
 
 class PosterousAuthError < StandardError; end
+class PosterousTagError  < StandardError; end
 
 # NEXT STEPS
 # include a file or multiple files
@@ -22,7 +23,7 @@ class Posterous
   # HTTParty Specific
   base_uri DOMAIN
 
-  attr_accessor :title, :body, :source, :source_url, :date
+  attr_accessor :title, :body, :source, :source_url, :date, :tags
   attr_reader   :site_id, :private_post, :autopost, :media
 
   def initialize user, pass, site_id = nil
@@ -30,11 +31,11 @@ class Posterous
       !user.is_a?(String) || !pass.is_a?(String) || user == "" || pass == ""
     self.class.basic_auth user, pass
     @site_id = site_id ? site_id.to_s : site_id
-    @title = @body = @source = @source_url = @date = @media = nil
+    @source = @body = @title = @source_url = @date = @media = @tags = nil
   end
   
-  def site_id= val
-    @site_id = val.to_s
+  def site_id= id
+    @site_id = id.to_s
   end
   
   def valid_user?
@@ -66,21 +67,20 @@ class Posterous
     @autopost = 1
   end
 
-  def add_post
-    self.class.post(POST_PATH, :query => build_query)
-  end
-
   def build_query
     options           = { :site_id    => @site_id,
                           :media      => @media,
                           :autopost   => @autopost,
                           :private    => @private_post,
-                          :date       => @date }
+                          :date       => @date, 
+                          :tags       => @tags
+                        }
     query             = { :title      => @title,
                           :body       => @body,
                           :source     => @source,
-                          :sourceLink => @source_url }
-                          
+                          :sourceLink => @source_url 
+                        }
+
     #Clean out any empty options &  merge
     options.delete_if { |k,v| !v }  
     query.merge!(options)
@@ -88,6 +88,15 @@ class Posterous
 
   def ping_account
     self.class.post(AUTH_PATH, :query => {})["rsp"]
+  end
+  
+  def add_post
+    self.class.post(POST_PATH, :query => build_query)
+  end
+  
+  def tags= ary
+    raise PosterousTagError, 'Tags must add from be in an array' if !ary.is_a?(Array)
+    @tags = ary.join(", ")
   end
   
 end

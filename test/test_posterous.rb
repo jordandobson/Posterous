@@ -223,6 +223,32 @@ class TestPosterous < Test::Unit::TestCase
     assert_equal false, @new_obj.has_site?
   end
   
+  def test_tags_are_added_correctly
+    @new_obj.tags = []
+    assert_equal @new_obj.tags, ""
+  end
+  
+  def test_tags_single_is_correctly
+    @new_obj.tags = ["Glue"]
+    assert_equal @new_obj.tags, "Glue"
+  end
+  
+  def test_tags_single_is_correctly
+    @new_obj.tags = ["Glue"]
+    assert_equal @new_obj.tags, "Glue"
+  end
+  
+  def test_tags_single_is_correctly_joined
+    @new_obj.tags = ["Glue", "Posterous", "Ruby on Rails"]
+    assert_equal @new_obj.tags, "Glue, Posterous, Ruby on Rails"
+  end
+
+  def test_raises_if_tags_not_set_as_array
+    assert_raise PosterousTagError do
+      @new_obj.tags = "hello, "
+    end
+  end
+  
   def test_builds_query_without_site_id
     expected = {:source=>nil, :title=>nil, :body=>nil, :sourceLink=>nil}
     assert_equal expected, @new_obj.build_query
