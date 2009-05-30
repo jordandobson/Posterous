@@ -33,7 +33,7 @@ class Posterous
     @site_id = site_id ? site_id.to_s : site_id
     @source = @body = @title = @source_url = @date = @media = @tags = nil
   end
-  
+
   def site_id= id
     @site_id = id.to_s
   end
@@ -41,15 +41,15 @@ class Posterous
     raise PosterousTagError, 'Tags must add from be in an array' if !ary.is_a?(Array)
     @tags = ary.join(", ")
   end
-  
+
   def valid_user?
-    res = ping_account
+    res = get_account_info
     return false unless res.is_a?(Hash)
     res["stat"] == "ok" ? true : false
   end
 
   def has_site?
-    res = ping_account
+    res = get_account_info
     return false unless res.is_a?(Hash)
     if res["site"].is_a?(Hash)
       @site_id && @site_id == res["site"]["id"] || !@site_id ? true : false
@@ -62,9 +62,9 @@ class Posterous
       false
     end
   end
-  
+
   def get_primary_site
-    res = ping_account
+    res = get_account_info
     raise PosterousSiteError, "Couldn't find a primary site. Check login and password is valid." \
       unless res.is_a?(Hash) && res["stat"] == "ok" && res["site"]
     site_list = res["site"].is_a?(Array) ? res["site"] : [res["site"]]
@@ -73,11 +73,11 @@ class Posterous
     end
     return nil
   end
-  
+
   def set_to_private
     @private_post = 1
   end
-  
+
   def set_to_autopost
     @autopost = 1
   end
@@ -98,7 +98,7 @@ class Posterous
     query.merge!(options)
   end
 
-  def ping_account
+  def get_account_info
     self.class.post(AUTH_PATH, :query => {})["rsp"]
   end
   

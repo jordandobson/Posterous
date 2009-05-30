@@ -7,110 +7,110 @@ class TestPosterous < Test::Unit::TestCase
   def setup
     @e = "email"
     @p = "password"
-    
+
     @new_obj                  = Posterous.new(@e, @p)
     @new_obj_with_id          = Posterous.new(@e, @p, "174966")
     @new_obj_with_bad_id      = Posterous.new(@e, @p, "badID")
     @new_obj_with_invalid_id  = Posterous.new(@e, @p, "666")
-    
+
     @private_url_path  = /[.]posterous[.]com\/private\//
-    
+
     @resp_ok           ={ "rsp"     => {
                           "site"    => {
-                          "name"    => "ruby-posterous's posterous", 
-                          "primary" => "true", "private"=>"false", 
-                          "url"     => "http://ruby-posterous.posterous.com", 
-                          "id"      => "174966" }, 
+                          "name"    => "ruby-posterous's posterous",
+                          "primary" => "true", "private"=>"false",
+                          "url"     => "http://ruby-posterous.posterous.com",
+                          "id"      => "174966" },
                           "stat"    => "ok" }}
-                          
+
     @resp_fail         ={ "rsp"     => {
                           "err"     => {
-                          "msg"     => "Invalid Posterous email or password", 
-                          "code"    => "3001" }, 
+                          "msg"     => "Invalid Posterous email or password",
+                          "code"    => "3001" },
                           "stat"    => "fail" }}
-                          
+
     @resp_ok_2_sites   ={ "rsp"     => {
                           "site"    => [{
-                          "name"    => "ruby-posterous's posterous", 
-                          "primary" => "false", 
-                          "private" => "false", 
-                          "url"     => "http://ruby-posterous.posterous.com", 
+                          "name"    => "ruby-posterous's posterous",
+                          "primary" => "false",
+                          "private" => "false",
+                          "url"     => "http://ruby-posterous.posterous.com",
                           "id"      => "174966"
                           }, {
-                          "name"    => "uw-ruby", 
-                          "primary" => "true", 
-                          "private" => "false", 
-                          "url"     => "http://uwruby.posterous.com", 
-                          "id"      => "175260" }], 
+                          "name"    => "uw-ruby",
+                          "primary" => "true",
+                          "private" => "false",
+                          "url"     => "http://uwruby.posterous.com",
+                          "id"      => "175260" }],
                           "stat"    => "ok"     }}
-    
+
     @good_response     ={ "site"    => {
-                          "name"    => "ruby-posterous's posterous", 
-                          "primary" => "true", 
-                          "private" => "false", 
-                          "url"     => "http://ruby-posterous.posterous.com", 
-                          "id"      => "174966" }, 
+                          "name"    => "ruby-posterous's posterous",
+                          "primary" => "true",
+                          "private" => "false",
+                          "url"     => "http://ruby-posterous.posterous.com",
+                          "id"      => "174966" },
                           "stat"    => "ok" }
-                          
+
     @good_response_2_sites ={ "rsp" => {
                           "site"    => [{
                           "name"    => "ruby-posterous's posterous",
-                          "primary" => "true", 
-                          "private" => "false", 
-                          "url"     => "http://ruby-posterous.posterous.com", 
+                          "primary" => "true",
+                          "private" => "false",
+                          "url"     => "http://ruby-posterous.posterous.com",
                           "id"      => "174966"
                           }, {
-                          "name"    => "uw-ruby", 
-                          "primary" => "false", 
-                          "private" => "false", 
-                          "url"     => "http://uwruby.posterous.com", 
+                          "name"    => "uw-ruby",
+                          "primary" => "false",
+                          "private" => "false",
+                          "url"     => "http://uwruby.posterous.com",
                           "id"      => "175260" }], 
                           "stat"    => "ok" }}
-                          
+
     @bad_response      ={ "err"     => {
-                          "msg"     => "Invalid Posterous email or password", 
-                          "code"    => "3001" }, 
+                          "msg"     => "Invalid Posterous email or password",
+                          "code"    => "3001" },
                           "stat"    => "fail" }
-                          
+
     @post_success      ={ "rsp"     => {
                           "post"    => {
-                          "title"   => "Untitled", 
-                          "url"     => "http://post.ly/dFW", 
+                          "title"   => "Untitled",
+                          "url"     => "http://post.ly/dFW",
                           "id"      => "848898", 
-                          "longurl" => "http://glue.posterous.com/687985" }, 
+                          "longurl" => "http://glue.posterous.com/687985" },
                           "stat"    => "ok" }}
-                          
+
     @post_title_success ={"rsp"     => {
                           "post"    => {
-                          "title"   => "My Title", 
-                          "url"     => "http://post.ly/dFW", 
-                          "id"      => "848898", 
-                          "longurl" => "http://glue.posterous.com/687985" }, 
+                          "title"   => "My Title",
+                          "url"     => "http://post.ly/dFW",
+                          "id"      => "848898",
+                          "longurl" => "http://glue.posterous.com/687985" },
                           "stat"    => "ok" }}
-                          
+
     @post_invalid_site ={ "rsp"     => {
                           "err"     => {
-                          "msg"     => "Invalid site id", 
-                          "code"    => "3002" }, 
+                          "msg"     => "Invalid site id",
+                          "code"    => "3002" },
                           "stat"    => "fail" }}
-                          
+
     @post_access_error ={ "rsp"     => {
                           "err"     => {
-                          "msg"     => "User does not have access to this site", 
-                          "code"    => "3003" }, 
+                          "msg"     => "User does not have access to this site",
+                          "code"    => "3003" },
                           "stat"    => "fail" }}
-                          
+
     @post_bad_account  ={ "rsp"     => {
                           "err"     => {
-                          "msg"     => "Invalid Posterous email or password", 
-                          "code"    => "3001" }, 
+                          "msg"     => "Invalid Posterous email or password",
+                          "code"    => "3001" },
                           "stat"    => "fail" }}
-                          
+
     @post_private_good ={ "rsp"     => {
                           "post"    => {
-                          "title"   => "Posterous test", 
-                          "url"     => "http://post.ly/gxK", 
-                          "id"      => "891064", 
+                          "title"   => "Posterous test",
+                          "url"     => "http://post.ly/gxK",
+                          "id"      => "891064",
                           "longurl" => "http://glue.posterous.com/private/tGIEAateBy" },
                           "stat"    => "ok" }}
   end
@@ -119,7 +119,7 @@ class TestPosterous < Test::Unit::TestCase
     assert_raise PosterousAuthError do
       Posterous.new('', @p)
     end
-  end  
+  end
 
   def test_raises_if_password_is_blank
     assert_raise PosterousAuthError do
@@ -163,7 +163,7 @@ class TestPosterous < Test::Unit::TestCase
     Posterous.stubs(:post).returns(@resp_fail)
     assert_equal false, @new_obj.valid_user?
   end
-  
+
   def test_user_is_invalid_when_response_isnt_hash
     Posterous.stubs(:post).returns("666")
     assert_equal false, @new_obj.valid_user?
@@ -171,12 +171,12 @@ class TestPosterous < Test::Unit::TestCase
 
   def test_ping_success_hash_adjustment
     Posterous.stubs(:post).returns(@resp_ok)
-    assert_equal @good_response, @new_obj.ping_account
+    assert_equal @good_response, @new_obj.get_account_info
   end
 
   def test_ping_fail_hash_adjustment
     Posterous.stubs(:post).returns(@resp_fail)
-    assert_equal @bad_response, @new_obj.ping_account
+    assert_equal @bad_response, @new_obj.get_account_info
   end
 
   def test_has_site_is_successful
@@ -218,22 +218,22 @@ class TestPosterous < Test::Unit::TestCase
     Posterous.stubs(:post).returns("666")
     assert_equal false, @new_obj.has_site?
   end
-  
+
   def test_tags_are_added_correctly
     @new_obj.tags = []
     assert_equal @new_obj.tags, ""
   end
-  
+
   def test_tags_single_is_correctly
     @new_obj.tags = ["Glue"]
     assert_equal @new_obj.tags, "Glue"
   end
-  
+
   def test_tags_single_is_correctly
     @new_obj.tags = ["Glue"]
     assert_equal @new_obj.tags, "Glue"
   end
-  
+
   def test_tags_single_is_correctly_joined
     @new_obj.tags = ["Glue", "Posterous", "Ruby on Rails"]
     assert_equal @new_obj.tags, "Glue, Posterous, Ruby on Rails"
@@ -244,17 +244,17 @@ class TestPosterous < Test::Unit::TestCase
       @new_obj.tags = "hello, "
     end
   end
-  
+
   def test_gets_primary_single_site
     Posterous.stubs(:post).returns(@resp_ok)
     assert_equal @resp_ok["rsp"]["site"]["id"],             @new_obj.get_primary_site
   end
-  
+
   def test_gets_primary_site_from_multiple_listing
     Posterous.stubs(:post).returns(@resp_ok_2_sites)
     assert_equal @resp_ok_2_sites["rsp"]["site"][1]["id"],  @new_obj.get_primary_site
   end
-  
+
   def test_gets_primary_site_raises_on_error
     Posterous.stubs(:post).returns(@resp_fail)
     assert_raise PosterousSiteError do
@@ -270,7 +270,7 @@ class TestPosterous < Test::Unit::TestCase
     assert_not_equal   original, updated
     assert_equal       @resp_ok_2_sites["rsp"]["site"][1]["id"], updated 
   end
-  
+
   def test_gets_primary_site_is_set_to_site_id
     Posterous.stubs(:post).returns(@resp_ok)
     original         = @new_obj.site_id
@@ -279,7 +279,7 @@ class TestPosterous < Test::Unit::TestCase
     assert_not_equal   original, updated
     assert_equal       @resp_ok["rsp"]["site"]["id"], updated
   end
-  
+
   def test_gets_primary_site_is_set_to_site_id
     Posterous.stubs(:post).returns(@resp_ok)
     original         = @new_obj.site_id
@@ -288,12 +288,12 @@ class TestPosterous < Test::Unit::TestCase
     assert_not_equal   original, updated
     assert_equal       @resp_ok["rsp"]["site"]["id"], updated
   end
-  
+
   def test_builds_query_without_site_id
     expected = { :source => nil, :title => nil, :body => nil, :sourceLink => nil}
     assert_equal expected, @new_obj.build_query
   end
-  
+
   def test_builds_query_with_site_id
     expected = { :source => nil, :body => nil, :sourceLink => nil, :site_id => "174966", :title => nil }
     assert_equal expected, @new_obj_with_id.build_query
@@ -320,13 +320,13 @@ class TestPosterous < Test::Unit::TestCase
     expected = { :source => nil, :body => nil, :sourceLink => nil, :title => nil, :private => 1 }
     assert_equal expected, @new_obj.build_query
   end
-  
+
   def test_builds_query_with_autopost_option
     @new_obj.set_to_autopost
     expected = { :source => nil, :body => nil, :sourceLink => nil, :title => nil, :autopost => 1 }
     assert_equal expected, @new_obj.build_query
   end
-  
+
   def test_builds_query_with_site_id
     @new_obj.site_id = 20
     expected = { :source => nil, :body => nil, :sourceLink => nil, :site_id => "20", :title => nil }
@@ -341,7 +341,7 @@ class TestPosterous < Test::Unit::TestCase
     expected = { :source => nil, :body => nil, :sourceLink => nil, :site_id => "20", :title => nil, :private => 1, :date => date }
     assert_equal expected, @new_obj.build_query
   end
-  
+
   def test_builds_query_with_all_fields_set_and_site_id
     @new_obj_with_id.title      = "My Title"
     @new_obj_with_id.body       = "My Body"
@@ -350,13 +350,13 @@ class TestPosterous < Test::Unit::TestCase
     expected = { :source => "The Tubes", :body => "My Body", :sourceLink => "http://TheTubes.com", :site_id => "174966", :title => "My Title" }
     assert_equal expected, @new_obj_with_id.build_query
   end
-  
+
   def test_add_post_successful
     Posterous.stubs(:post).returns(@post_success)
     expected = @post_success
     assert_equal expected, @new_obj.add_post
   end
-  
+
   def test_add_post_successful_no_content
     Posterous.stubs(:post).returns(@post_success)
     actual = @new_obj.add_post
@@ -364,14 +364,14 @@ class TestPosterous < Test::Unit::TestCase
     assert_equal "ok",                actual["rsp"]["stat"]
     assert_equal "Untitled",          actual["rsp"]["post"]["title"]
   end
-  
+
   def test_add_post_successful_with_title_content
     Posterous.stubs(:post).returns(@post_title_success)
     @new_obj.title = "My Title"
     actual = @new_obj.add_post
     assert_equal "My Title",          actual["rsp"]["post"]["title"]
   end
-  
+
   def test_add_post_invalid_site_id_fails
     Posterous.stubs(:post).returns(@post_invalid_site)
     actual = @new_obj_with_bad_id.add_post
@@ -387,16 +387,15 @@ class TestPosterous < Test::Unit::TestCase
     assert_equal nil,                 actual["rsp"]["post"]
     assert_match "not have access",   actual["rsp"]["err"]["msg"]
   end
-  
+
   def test_add_post_invalid_account_info
     Posterous.stubs(:post).returns(@post_bad_account)
-    
     actual = Posterous.new("666", "666").add_post
     assert_equal "fail",              actual["rsp"]["stat"]
     assert_equal nil,                 actual["rsp"]["post"]
     assert_match "Invalid Posterous", actual["rsp"]["err"]["msg"]
   end
-  
+
   def test_add_post_is_private_by_default
     Posterous.stubs(:post).returns(@post_success)
     actual = @new_obj.add_post

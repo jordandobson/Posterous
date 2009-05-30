@@ -4,59 +4,108 @@ http://github.com/jordandobson/Posterous/tree/master
 
 == DESCRIPTION:
 
-The Posterous gem provides posting to Posterous.com using your email, password, site id(if you have multiple sites) and your blog content. With this gem, you have access to post a title, body text, posting source and a source link to Posterous.
+The Posterous gem provides posting to Posterous.com using your email, password, site id(if you have multiple sites) and your blog content. With this gem, you have access to add an entry on posterous by providing these options a title, body text, date, tags, set to autopost, set private, posted by source name and a posted by source link to Posterous. You can include no options or all options. 
 
-Posting images and pulling down your posts will be available soon. They were made available a day before this was completed.
+Posting images with posts, posting only images and pulling down your posts will be available soon. The Posterous API was unstable when this version of the gem was created.
 
 == FEATURES/PROBLEMS:
 
 * All Fields are optional
-* Media, AutoPost & Private are not yet implemented
+* Media files are not yet implemented
 * Posting Only, Reading & Images are not yet included
-* Allows you to see if a users email and password are valid
-* Allows you to check if a user has a valid site
-* Allows you to check if a specified site_id is valid for their account
-
+* Check if a users email and password are a valid account
+* Check if a user has a valid site
+* Check if a specified site_id is valid for their account
+* Get their primary Site ID
+* This is very well throughly tested
 
 == SYNOPSIS:
 
-# Instantiate your account 
-account = Posterous.new('email_address', 'password')
-account = Posterous.new('email_address', 'password', 68710)
-account = Posterous.new('email_address', 'password', '68710')
+1. Instantiate your account
 
-# Check if the user is valid
-account.valid_user?
+    * You can provide just the email and password
+    
+        account = Posterous.new('email_address', 'password')
+      
+    * Or you can provide the ID as a string or integer
 
-# Check if the user has a site and if they specified a Site ID check it's valid
-account.has_site?
+        account = Posterous.new('email_address', 'password', 68710)
+        account = Posterous.new('email_address', 'password', '68710')
 
-# Setup your post
-account.title = "My Title"
-account.body  = "My Body Text"
-account.source = "Glue"
-account.source_url  = "http://GlueNow.com"
+2. Get more info about the user's account if you need it
 
-# Add your post to Posterous.com
-account.add_post
+    * Check if the user is valid
+    
+        account.valid_user?
+      
+    * Check if the user has a site and if they specified a Site ID check it's valid
+    
+        account.has_site?
+      
+    * Get the users primary site ID (In case they have two)
+    
+        account.get_primary_site
+      
+    * Get a list of your sites and additional info
+    
+        account.get_account_info
 
-# Get a success or error hash back or nil
+3. Setup your post with any or all of these optional fields
+
+    * You can set your id at this point or when it's instantiated
+    
+        account.site_id         = account.get_primary_site or specific site ID
+
+    * Set these optional fields
+    
+        account.title           = "My Title"
+        account.body            = "My Body Text"
+        account.source          = "Glue"
+        account.source_url      = "http://GlueNow.com"
+        account.tags            = ["Glue", "Posterous", "Ruby", "Made By Squad"]
+        account.date            = Time.now
+    
+    * Call these methods to set them
+    
+        account.set_to_private
+        account.set_to_autopost
+
+4. Add your post to Posterous.com
+
+    * Set this to a variable to work with the response
+    
+        response = account.add_post
+
+5. You get a success or error hash back or nil
+
+    * Your response should look something like this if successful
+    
+    response #=> { "rsp" => { "post" => { "title"   => "My Title", "url" => "http://post.ly/dFW", "id" => "848898", "longurl" => "http://glue.posterous.com/687985" },  "stat" => "ok" } }
+    
+    * See the tests for this gem for failure responses and responses for other methods
 
 
-# URL
-http://posterous.com/api/newpost
+# MORE INFO
 
-# IMPLEMENTED FIELDS - All are optional
-"site_id"     Optional. Id of the site to post to. 
-"title"       Optional. Title of post
-"body"        Optional. Body of post
-"source"      Optional. The name of your application or website
-"sourceLink"  Optional. Link to your application or website
+  * URL
+  
+    http://posterous.com/api/newpost
 
-# UNIMPLEMENTED FIELDS - These will likely be implemented in a future release
-"autopost"    Optional. 0 or 1.
-"private"     Optional. 0 or 1.
-"media"       Optional. File data. Multiple files OK
+  * IMPLEMENTED FIELDS - All are optional
+  
+    "site_id"     Optional. Id of the site to post to. 
+    "title"       Optional. Title of post
+    "body"        Optional. Body of post
+    "source"      Optional. The name of your application or website
+    "sourceLink"  Optional. Link to your application or website
+    "date"        Optional. In GMT. Any parsable format. Cannot be in the future.
+    "tags"        Optional. Comma separate tags
+    "autopost"    Optional. 0 or 1.
+    "private"     Optional. 0 or 1.
+
+  * UNIMPLEMENTED FIELDS - These will likely be implemented in a future release
+
+    "media"       Optional. File data. Multiple files OK
 
 == REQUIREMENTS:
 
