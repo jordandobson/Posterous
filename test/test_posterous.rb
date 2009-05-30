@@ -1,13 +1,8 @@
 require 'test/unit'
 require 'posterous'
 require 'mocha'
-require 'fakeweb'
-require 'base64'
 
 class TestPosterous < Test::Unit::TestCase
-
-  # This makes sure we don't connect to the new while testing 
-  FakeWeb.allow_net_connect = false
 
   def setup
     @e = "email"
@@ -37,13 +32,13 @@ class TestPosterous < Test::Unit::TestCase
     @resp_ok_2_sites   ={ "rsp"     => {
                           "site"    => [{
                           "name"    => "ruby-posterous's posterous", 
-                          "primary" => "true", 
+                          "primary" => "false", 
                           "private" => "false", 
                           "url"     => "http://ruby-posterous.posterous.com", 
                           "id"      => "174966"
                           }, {
                           "name"    => "uw-ruby", 
-                          "primary" => "false", 
+                          "primary" => "true", 
                           "private" => "false", 
                           "url"     => "http://uwruby.posterous.com", 
                           "id"      => "175260" }], 
@@ -60,7 +55,8 @@ class TestPosterous < Test::Unit::TestCase
     @good_response_2_sites ={ "rsp" => {
                           "site"    => [{
                           "name"    => "ruby-posterous's posterous",
-                          "primary" => "true", "private"=>"false", 
+                          "primary" => "true", 
+                          "private" => "false", 
                           "url"     => "http://ruby-posterous.posterous.com", 
                           "id"      => "174966"
                           }, {
@@ -249,13 +245,57 @@ class TestPosterous < Test::Unit::TestCase
     end
   end
   
+  def test_gets_primary_single_site
+    Posterous.stubs(:post).returns(@resp_ok)
+    assert_equal @resp_ok["rsp"]["site"]["id"],             @new_obj.get_primary_site
+  end
+  
+  def test_gets_primary_site_from_multiple_listing
+    Posterous.stubs(:post).returns(@resp_ok_2_sites)
+    assert_equal @resp_ok_2_sites["rsp"]["site"][1]["id"],  @new_obj.get_primary_site
+  end
+  
+  def test_gets_primary_site_raises_on_error
+    Posterous.stubs(:post).returns(@resp_fail)
+    assert_raise PosterousSiteError do
+      @new_obj.get_primary_site
+    end
+  end
+
+  def test_gets_primary_site_is_passed_to_overide_site_id
+    Posterous.stubs(:post).returns(@resp_ok_2_sites)
+    original                 = @new_obj_with_id.site_id
+    @new_obj_with_id.site_id = @new_obj_with_id.get_primary_site
+    updated                  = @new_obj_with_id.site_id
+    assert_not_equal   original, updated
+    assert_equal       @resp_ok_2_sites["rsp"]["site"][1]["id"], updated 
+  end
+  
+  def test_gets_primary_site_is_set_to_site_id
+    Posterous.stubs(:post).returns(@resp_ok)
+    original         = @new_obj.site_id
+    @new_obj.site_id = @new_obj.get_primary_site
+    updated          = @new_obj_with_id.site_id
+    assert_not_equal   original, updated
+    assert_equal       @resp_ok["rsp"]["site"]["id"], updated
+  end
+  
+  def test_gets_primary_site_is_set_to_site_id
+    Posterous.stubs(:post).returns(@resp_ok)
+    original         = @new_obj.site_id
+    @new_obj.site_id = @new_obj.get_primary_site
+    updated          = @new_obj_with_id.site_id
+    assert_not_equal   original, updated
+    assert_equal       @resp_ok["rsp"]["site"]["id"], updated
+  end
+  
   def test_builds_query_without_site_id
-    expected = {:source=>nil, :title=>nil, :body=>nil, :sourceLink=>nil}
+    expected = { :source => nil, :title => nil, :body => nil, :sourceLink => nil}
     assert_equal expected, @new_obj.build_query
   end
   
   def test_builds_query_with_site_id
-    expected = {:source=>nil, :body=>nil, :sourceLink=>nil, :site_id=>"174966", :title=>nil}
+    expected = { :source => nil, :body => nil, :sourceLink => nil, :site_id => "174966", :title => nil }
     assert_equal expected, @new_obj_with_id.build_query
   end
 
@@ -264,41 +304,41 @@ class TestPosterous < Test::Unit::TestCase
     @new_obj.body       = "My Body"
     @new_obj.source     = "The Tubes"
     @new_obj.source_url = "http://TheTubes.com"
-    expected = {:source=>"The Tubes", :body=>"My Body", :sourceLink=>"http://TheTubes.com", :title=>"My Title"}
+    expected = { :source => "The Tubes", :body => "My Body", :sourceLink => "http://TheTubes.com", :title => "My Title" }
     assert_equal expected, @new_obj.build_query
   end 
 
   def test_builds_query_with_date_option
     date = Time.now
     @new_obj.date = date
-    expected = {:source => nil, :body => nil, :sourceLink => nil, :title => nil, :date => date}
+    expected = { :source => nil, :body => nil, :sourceLink => nil, :title => nil, :date => date }
     assert_equal expected, @new_obj.build_query
   end
 
   def test_builds_query_with_private_option
     @new_obj.set_to_private
-    expected = {:source => nil, :body => nil, :sourceLink => nil, :title => nil, :private => 1 }
+    expected = { :source => nil, :body => nil, :sourceLink => nil, :title => nil, :private => 1 }
     assert_equal expected, @new_obj.build_query
   end
   
   def test_builds_query_with_autopost_option
     @new_obj.set_to_autopost
-    expected = {:source => nil, :body => nil, :sourceLink => nil, :title => nil, :autopost => 1 }
+    expected = { :source => nil, :body => nil, :sourceLink => nil, :title => nil, :autopost => 1 }
     assert_equal expected, @new_obj.build_query
   end
   
   def test_builds_query_with_site_id
-    @new_obj.site_id = 20;
-    expected = {:source => nil, :body => nil, :sourceLink => nil, :site_id => "20", :title => nil }
+    @new_obj.site_id = 20
+    expected = { :source => nil, :body => nil, :sourceLink => nil, :site_id => "20", :title => nil }
     assert_equal expected, @new_obj.build_query
   end
 
   def test_builds_query_with_all_options_set
     date = Time.now
-    @new_obj.date = date
+    @new_obj.date    = date
+    @new_obj.site_id = 20
     @new_obj.set_to_private
-    @new_obj.site_id = 20;
-    expected = {:source => nil, :body => nil, :sourceLink => nil, :site_id => "20", :title => nil, :private => 1, :date => date }
+    expected = { :source => nil, :body => nil, :sourceLink => nil, :site_id => "20", :title => nil, :private => 1, :date => date }
     assert_equal expected, @new_obj.build_query
   end
   
@@ -307,7 +347,7 @@ class TestPosterous < Test::Unit::TestCase
     @new_obj_with_id.body       = "My Body"
     @new_obj_with_id.source     = "The Tubes"
     @new_obj_with_id.source_url = "http://TheTubes.com"
-    expected = {:source=>"The Tubes", :body=>"My Body", :sourceLink=>"http://TheTubes.com", :site_id=>"174966", :title=>"My Title"}
+    expected = { :source => "The Tubes", :body => "My Body", :sourceLink => "http://TheTubes.com", :site_id => "174966", :title => "My Title" }
     assert_equal expected, @new_obj_with_id.build_query
   end
   
@@ -329,7 +369,7 @@ class TestPosterous < Test::Unit::TestCase
     Posterous.stubs(:post).returns(@post_title_success)
     @new_obj.title = "My Title"
     actual = @new_obj.add_post
-    assert_equal "My Title", actual["rsp"]["post"]["title"]
+    assert_equal "My Title",          actual["rsp"]["post"]["title"]
   end
   
   def test_add_post_invalid_site_id_fails
@@ -360,7 +400,6 @@ class TestPosterous < Test::Unit::TestCase
   def test_add_post_is_private_by_default
     Posterous.stubs(:post).returns(@post_success)
     actual = @new_obj.add_post
-    # actual = Posterous.new("info@gluenow.com", "Password1").add_post
     assert_equal    "ok",               actual["rsp"]["stat"]
     assert_no_match @private_url_path,  actual["rsp"]["post"]["longurl"]
   end
@@ -369,9 +408,6 @@ class TestPosterous < Test::Unit::TestCase
     Posterous.stubs(:post).returns(@post_private_good)
     @new_obj.set_to_private
     actual = @new_obj.add_post
-    # actual = Posterous.new("info@gluenow.com", "Password1")
-    # actual.set_private
-    # actual = actual.add_post
     assert_equal "ok",                  actual["rsp"]["stat"]
     assert_match @private_url_path,     actual["rsp"]["post"]["longurl"]
   end

@@ -1,30 +1,30 @@
 require 'rubygems'
 require 'httparty'
-require 'base64'
 
 class PosterousAuthError < StandardError; end
 class PosterousTagError  < StandardError; end
+class PosterousSiteError < StandardError; end
 
-# NEXT STEPS
-# include a file or multiple files
-# include tags
-# get and set primary id
-# include reading posts
-# build gem
-# post on rubyforge
+###
+### FUTURE PLANS
+###
+#   * Include media with your post
+#   * Post only a media file and get a url for it back
+#   * Allow reading in posterous posts
+#   * Include more usage examples outside of readme
 
 class Posterous
+
   VERSION     = '0.1.0'
   DOMAIN      = 'posterous.com'
   POST_PATH   = '/api/newpost'
   AUTH_PATH   = '/api/getsites'
 
   include HTTParty
-  # HTTParty Specific
   base_uri DOMAIN
 
   attr_accessor :title, :body, :source, :source_url, :date, :tags
-  attr_reader   :site_id, :private_post, :autopost, :media
+  attr_reader   :site_id, :private_post, :autopost
 
   def initialize user, pass, site_id = nil
     raise PosterousAuthError, 'Either Username or Password is blank and/or not a string.' if \
@@ -37,6 +37,10 @@ class Posterous
   def site_id= id
     @site_id = id.to_s
   end
+  def tags= ary
+    raise PosterousTagError, 'Tags must add from be in an array' if !ary.is_a?(Array)
+    @tags = ary.join(", ")
+  end
   
   def valid_user?
     res = ping_account
@@ -47,9 +51,9 @@ class Posterous
   def has_site?
     res = ping_account
     return false unless res.is_a?(Hash)
-    if res["site"].is_a?(Hash)        # Check for single site and a specific id if specified
+    if res["site"].is_a?(Hash)
       @site_id && @site_id == res["site"]["id"] || !@site_id ? true : false
-    elsif res["site"].is_a?(Array)    # Check lists sites and that the specified site id is present
+    elsif res["site"].is_a?(Array)
       res["site"].each do |site|
         return true if @site_id && @site_id == site["id"]
       end
@@ -57,6 +61,17 @@ class Posterous
     else
       false
     end
+  end
+  
+  def get_primary_site
+    res = ping_account
+    raise PosterousSiteError, "Couldn't find a primary site. Check login and password is valid." \
+      unless res.is_a?(Hash) && res["stat"] == "ok" && res["site"]
+    site_list = res["site"].is_a?(Array) ? res["site"] : [res["site"]]
+    site_list.each do |site|
+      return site["id"] if site["primary"] == "true"
+    end
+    return nil
   end
   
   def set_to_private
@@ -68,21 +83,18 @@ class Posterous
   end
 
   def build_query
-    options           = { :site_id    => @site_id,
-                          :media      => @media,
-                          :autopost   => @autopost,
-                          :private    => @private_post,
-                          :date       => @date, 
-                          :tags       => @tags
-                        }
-    query             = { :title      => @title,
-                          :body       => @body,
-                          :source     => @source,
-                          :sourceLink => @source_url 
-                        }
+    options = { :site_id    => @site_id,
+                :autopost   => @autopost,
+                :private    => @private_post,
+                :date       => @date,
+                :tags       => @tags }
 
-    #Clean out any empty options &  merge
-    options.delete_if { |k,v| !v }  
+    query   = { :title      => @title,
+                :body       => @body,
+                :source     => @source,
+                :sourceLink => @source_url }
+
+    options.delete_if { |k,v| !v }
     query.merge!(options)
   end
 
@@ -94,22 +106,4 @@ class Posterous
     self.class.post(POST_PATH, :query => build_query)
   end
   
-  def tags= ary
-    raise PosterousTagError, 'Tags must add from be in an array' if !ary.is_a?(Array)
-    @tags = ary.join(", ")
-  end
-  
 end
-
-
-#   def get_media_data
-#     if @media
-#       #IO.read(@media)
-#       #File.open(@media, 'rb') { |f| f.read }
-#       @media
-#     else
-#       false
-#     end
-#   end
-#     m       = get_media_data
-#     media   = m         ? { :media   => Base64.encode64(m)      } : {}
