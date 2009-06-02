@@ -1,0 +1,7 @@
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+bin/posterous
+lib/posterous.rb
+test/test_posterous.rb
