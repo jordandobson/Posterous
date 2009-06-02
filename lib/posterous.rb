@@ -15,7 +15,7 @@ class PosterousSiteError < StandardError; end
 
 class Posterous
 
-  VERSION     = '0.1.3'
+  VERSION     = '0.1.4'
   DOMAIN      = 'posterous.com'
   POST_PATH   = '/api/newpost'
   AUTH_PATH   = '/api/getsites'
