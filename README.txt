@@ -6,7 +6,7 @@ http://github.com/jordandobson/Posterous/tree/master
 
 The Posterous gem provides posting to Posterous.com using your email, password, site id(if you have multiple sites) and your blog content. With this gem, you have access to add an entry on posterous by providing these options a title, body text, date, tags, set to autopost, set private, posted by source name and a posted by source link to Posterous. You can include no options, all options or anything in between. 
 
-Posting images with posts, posting only images and pulling down your posts will be available soon. 
+Posting images with posts, posting only images and pulling down your posts will be available very soon. 
 
 == FEATURES/PROBLEMS:
 
