@@ -6,7 +6,7 @@ http://github.com/jordandobson/Posterous/tree/master
 
 The Posterous gem provides posting to Posterous.com using your email, password, site id(if you have multiple sites) and your blog content. With this gem, you have access to add an entry on posterous by providing these options a title, body text, date, tags, set to autopost, set private, posted by source name and a posted by source link to Posterous. You can include no options or all options. 
 
-Posting images with posts, posting only images and pulling down your posts will be available soon. The Posterous API was unstable when this version of the gem was created.
+Posting images with posts, posting only images and pulling down your posts will be available soon. 
 
 == FEATURES/PROBLEMS:
 
@@ -17,7 +17,7 @@ Posting images with posts, posting only images and pulling down your posts will 
 * Check if a user has a valid site
 * Check if a specified site_id is valid for their account
 * Get their primary Site ID
-* This is very well throughly tested
+* This is very throughly tested
 
 == SYNOPSIS:
 
@@ -38,11 +38,11 @@ Posting images with posts, posting only images and pulling down your posts will 
     
         account.valid_user?
       
-    * Check if the user has a site and if they specified a Site ID check it's valid
+    * Check if the user has a site AND if you've entered a Site ID, check it's valid too
     
         account.has_site?
       
-    * Get the users primary site ID (In case they have two)
+    * Get the users primary site ID (In case they have multiple sites)
     
         account.get_primary_site
       
@@ -52,7 +52,7 @@ Posting images with posts, posting only images and pulling down your posts will 
 
 3. Setup your post with any or all of these optional fields
 
-    * You can set your id at this point or when it's instantiated
+    * You can set your id at this point or at the begining when it's instantiated
     
         account.site_id         = account.get_primary_site or specific site ID
 
@@ -65,10 +65,10 @@ Posting images with posts, posting only images and pulling down your posts will 
         account.tags            = ["Glue", "Posterous", "Ruby", "Made By Squad"]
         account.date            = Time.now
     
-    * Call these methods to set them
+    * Call the set_to method with either :private or :autopost to apply that setting
     
-        account.set_to_private
-        account.set_to_autopost
+        account.set_to :private
+        account.set_to :autopost
 
 4. Add your post to Posterous.com
 

@@ -10,3 +10,10 @@
 
   * Updated the class to accept date, private, autopost, tags
 
+
+=== 0.1.3 / 2009-06-01
+
+* 1 major enhancement
+
+  * Updated Readme and DRYed up a method to use symbols
+

@@ -15,7 +15,7 @@ class PosterousSiteError < StandardError; end
 
 class Posterous
 
-  VERSION     = '0.1.2'
+  VERSION     = '0.1.3'
   DOMAIN      = 'posterous.com'
   POST_PATH   = '/api/newpost'
   AUTH_PATH   = '/api/getsites'
@@ -71,15 +71,12 @@ class Posterous
     site_list.each do |site|
       return site["id"] if site["primary"] == "true"
     end
-    return nil
+    nil
   end
-
-  def set_to_private
-    @private_post = 1
-  end
-
-  def set_to_autopost
-    @autopost = 1
+  
+  def set_to on
+    @private_post = 1 if on == :private
+    @autopost     = 1 if on == :autopost
   end
 
   def build_query

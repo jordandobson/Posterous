@@ -316,13 +316,13 @@ class TestPosterous < Test::Unit::TestCase
   end
 
   def test_builds_query_with_private_option
-    @new_obj.set_to_private
+    @new_obj.set_to :private
     expected = { :source => nil, :body => nil, :sourceLink => nil, :title => nil, :private => 1 }
     assert_equal expected, @new_obj.build_query
   end
 
   def test_builds_query_with_autopost_option
-    @new_obj.set_to_autopost
+    @new_obj.set_to :autopost
     expected = { :source => nil, :body => nil, :sourceLink => nil, :title => nil, :autopost => 1 }
     assert_equal expected, @new_obj.build_query
   end
@@ -337,7 +337,7 @@ class TestPosterous < Test::Unit::TestCase
     date = Time.now
     @new_obj.date    = date
     @new_obj.site_id = 20
-    @new_obj.set_to_private
+    @new_obj.set_to :private
     expected = { :source => nil, :body => nil, :sourceLink => nil, :site_id => "20", :title => nil, :private => 1, :date => date }
     assert_equal expected, @new_obj.build_query
   end
@@ -405,7 +405,7 @@ class TestPosterous < Test::Unit::TestCase
 
   def test_add_post_is_made_private
     Posterous.stubs(:post).returns(@post_private_good)
-    @new_obj.set_to_private
+    @new_obj.set_to :private
     actual = @new_obj.add_post
     assert_equal "ok",                  actual["rsp"]["stat"]
     assert_match @private_url_path,     actual["rsp"]["post"]["longurl"]
