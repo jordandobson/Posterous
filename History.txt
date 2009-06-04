@@ -1,15 +1,8 @@
-=== 0.1.0 / 2009-05-19
+=== 0.1.5 / 2009-06-03
 
 * 1 major enhancement
 
-  * Birthday!
-  
-=== 0.1.2 / 2009-05-29
-
-* 1 major enhancement
-
-  * Updated the class to accept date, private, autopost, tags
-
+  * Moved Everything into a module and updated tests
 
 === 0.1.3 / 2009-06-01
 
@@ -17,3 +10,15 @@
 
   * Updated Readme and DRYed up a method to use symbols
 
+=== 0.1.2 / 2009-05-29
+
+* 1 major enhancement
+
+  * Updated the class to accept date, private, autopost, tags
+
+=== 0.1.0 / 2009-05-19
+
+* 1 major enhancement
+
+  * Birthday!
+  

@@ -8,10 +8,10 @@ class TestPosterous < Test::Unit::TestCase
     @e = "email"
     @p = "password"
 
-    @new_obj                  = Posterous.new(@e, @p)
-    @new_obj_with_id          = Posterous.new(@e, @p, "174966")
-    @new_obj_with_bad_id      = Posterous.new(@e, @p, "badID")
-    @new_obj_with_invalid_id  = Posterous.new(@e, @p, "666")
+    @new_obj                  = Posterous::Client.new(@e, @p)
+    @new_obj_with_id          = Posterous::Client.new(@e, @p, "174966")
+    @new_obj_with_bad_id      = Posterous::Client.new(@e, @p, "badID")
+    @new_obj_with_invalid_id  = Posterous::Client.new(@e, @p, "666")
 
     @private_url_path  = /[.]posterous[.]com\/private\//
 
@@ -51,21 +51,6 @@ class TestPosterous < Test::Unit::TestCase
                           "url"     => "http://ruby-posterous.posterous.com",
                           "id"      => "174966" },
                           "stat"    => "ok" }
-
-    @good_response_2_sites ={ "rsp" => {
-                          "site"    => [{
-                          "name"    => "ruby-posterous's posterous",
-                          "primary" => "true",
-                          "private" => "false",
-                          "url"     => "http://ruby-posterous.posterous.com",
-                          "id"      => "174966"
-                          }, {
-                          "name"    => "uw-ruby",
-                          "primary" => "false",
-                          "private" => "false",
-                          "url"     => "http://uwruby.posterous.com",
-                          "id"      => "175260" }], 
-                          "stat"    => "ok" }}
 
     @bad_response      ={ "err"     => {
                           "msg"     => "Invalid Posterous email or password",
@@ -113,109 +98,110 @@ class TestPosterous < Test::Unit::TestCase
                           "id"      => "891064",
                           "longurl" => "http://glue.posterous.com/private/tGIEAateBy" },
                           "stat"    => "ok" }}
+
   end
 
   def test_raises_if_username_is_blank
-    assert_raise PosterousAuthError do
-      Posterous.new('', @p)
+    assert_raise Posterous::AuthError do
+      Posterous::Client.new('', @p)
     end
   end
 
   def test_raises_if_password_is_blank
-    assert_raise PosterousAuthError do
-      Posterous.new(@e, '')
+    assert_raise Posterous::AuthError do
+      Posterous::Client.new(@e, '')
     end
   end
 
   def test_raises_if_password_is_not_srting
-    assert_raise PosterousAuthError do
-      Posterous.new(@e, 666)
+    assert_raise Posterous::AuthError do
+      Posterous::Client.new(@e, 666)
     end
   end
 
   def test_raises_if_username_is_not_srting
-    assert_raise PosterousAuthError do
-      Posterous.new(666, @p)
+    assert_raise Posterous::AuthError do
+      Posterous::Client.new(666, @p)
     end
   end
 
   def test_site_id_can_be_witheld
-    actual = Posterous.new(@e, @p)
+    actual = Posterous::Client.new(@e, @p)
     assert_equal nil, actual.site_id
   end
 
   def test_site_id_can_be_provided
-    actual = Posterous.new(@e, @p, '174966')
+    actual = Posterous::Client.new(@e, @p, '174966')
     assert_equal '174966', actual.site_id
   end
 
   def test_site_id_is_converted_to_string
-    actual = Posterous.new(@e, @p, 174966)
+    actual = Posterous::Client.new(@e, @p, 174966)
     assert_equal '174966', actual.site_id
-  end  
+  end
 
   def test_user_is_valid
-    Posterous.stubs(:post).returns(@resp_ok)
+    Posterous::Client.stubs(:post).returns(@resp_ok)
     assert_equal true, @new_obj.valid_user?
   end
 
   def test_user_is_invalid
-    Posterous.stubs(:post).returns(@resp_fail)
+    Posterous::Client.stubs(:post).returns(@resp_fail)
     assert_equal false, @new_obj.valid_user?
   end
 
   def test_user_is_invalid_when_response_isnt_hash
-    Posterous.stubs(:post).returns("666")
+    Posterous::Client.stubs(:post).returns("666")
     assert_equal false, @new_obj.valid_user?
   end
 
   def test_ping_success_hash_adjustment
-    Posterous.stubs(:post).returns(@resp_ok)
-    assert_equal @good_response, @new_obj.get_account_info
+    Posterous::Client.stubs(:post).returns(@resp_ok)
+    assert_equal @good_response, @new_obj.account_info
   end
 
   def test_ping_fail_hash_adjustment
-    Posterous.stubs(:post).returns(@resp_fail)
-    assert_equal @bad_response, @new_obj.get_account_info
+    Posterous::Client.stubs(:post).returns(@resp_fail)
+    assert_equal @bad_response, @new_obj.account_info
   end
 
   def test_has_site_is_successful
-    Posterous.stubs(:post).returns(@resp_ok)
+    Posterous::Client.stubs(:post).returns(@resp_ok)
     assert_equal true, @new_obj.has_site?
   end
 
   def test_has_site_successful_if_site_id_matches_only_result
-    Posterous.stubs(:post).returns(@resp_ok_2_sites)
+    Posterous::Client.stubs(:post).returns(@resp_ok_2_sites)
     assert_equal true, @new_obj_with_id.has_site?
   end
 
   def test_has_site_fails_if_site_id_doesnt_match_only_result
-    Posterous.stubs(:post).returns(@resp_ok)
+    Posterous::Client.stubs(:post).returns(@resp_ok)
     assert_equal false, @new_obj_with_bad_id.has_site?
   end
 
   def test_has_site_is_successful_on_multiple_when_specified
-    Posterous.stubs(:post).returns(@resp_ok_2_sites)
+    Posterous::Client.stubs(:post).returns(@resp_ok_2_sites)
     assert_equal true, @new_obj_with_id.has_site?
   end
 
   def test_has_site_fails_if_specified_and_site_id_not_listed
-    Posterous.stubs(:post).returns(@resp_ok_2_sites)
+    Posterous::Client.stubs(:post).returns(@resp_ok_2_sites)
     assert_equal false, @new_obj_with_bad_id.has_site?
   end
 
   def test_has_site_fails_when_multiple_and_site_not_specified
-    Posterous.stubs(:post).returns(@resp_ok_2_sites)
+    Posterous::Client.stubs(:post).returns(@resp_ok_2_sites)
     assert_equal false, @new_obj.has_site?
   end
 
   def test_has_site_fails_with_error_response
-    Posterous.stubs(:post).returns(@resp_fail)
+    Posterous::Client.stubs(:post).returns(@resp_fail)
     assert_equal false, @new_obj.has_site?
   end
 
   def test_has_site_fails_if_response_isnt_hash
-    Posterous.stubs(:post).returns("666")
+    Posterous::Client.stubs(:post).returns("666")
     assert_equal false, @new_obj.has_site?
   end
 
@@ -235,41 +221,41 @@ class TestPosterous < Test::Unit::TestCase
   end
 
   def test_raises_if_tags_not_set_as_array
-    assert_raise PosterousTagError do
+    assert_raise Posterous::TagError do
       @new_obj.tags = "hello, "
     end
   end
 
   def test_gets_primary_single_site
-    Posterous.stubs(:post).returns(@resp_ok)
-    assert_equal @resp_ok["rsp"]["site"]["id"],             @new_obj.get_primary_site
+    Posterous::Client.stubs(:post).returns(@resp_ok)
+    assert_equal @resp_ok["rsp"]["site"]["id"],             @new_obj.primary_site
   end
 
   def test_gets_primary_site_from_multiple_listing
-    Posterous.stubs(:post).returns(@resp_ok_2_sites)
-    assert_equal @resp_ok_2_sites["rsp"]["site"][1]["id"],  @new_obj.get_primary_site
+    Posterous::Client.stubs(:post).returns(@resp_ok_2_sites)
+    assert_equal @resp_ok_2_sites["rsp"]["site"][1]["id"],  @new_obj.primary_site
   end
 
   def test_gets_primary_site_raises_on_error
-    Posterous.stubs(:post).returns(@resp_fail)
-    assert_raise PosterousSiteError do
-      @new_obj.get_primary_site
+    Posterous::Client.stubs(:post).returns(@resp_fail)
+    assert_raise Posterous::SiteError do
+      @new_obj.primary_site
     end
   end
 
   def test_gets_primary_site_is_passed_to_overide_site_id
-    Posterous.stubs(:post).returns(@resp_ok_2_sites)
+    Posterous::Client.stubs(:post).returns(@resp_ok_2_sites)
     original                 = @new_obj_with_id.site_id
-    @new_obj_with_id.site_id = @new_obj_with_id.get_primary_site
+    @new_obj_with_id.site_id = @new_obj_with_id.primary_site
     updated                  = @new_obj_with_id.site_id
     assert_not_equal   original, updated
     assert_equal       @resp_ok_2_sites["rsp"]["site"][1]["id"], updated 
   end
 
   def test_gets_primary_site_is_set_to_site_id
-    Posterous.stubs(:post).returns(@resp_ok)
+    Posterous::Client.stubs(:post).returns(@resp_ok)
     original         = @new_obj.site_id
-    @new_obj.site_id = @new_obj.get_primary_site
+    @new_obj.site_id = @new_obj.primary_site
     updated          = @new_obj_with_id.site_id
     assert_not_equal   original, updated
     assert_equal       @resp_ok["rsp"]["site"]["id"], updated
@@ -338,13 +324,13 @@ class TestPosterous < Test::Unit::TestCase
   end
 
   def test_add_post_successful
-    Posterous.stubs(:post).returns(@post_success)
+    Posterous::Client.stubs(:post).returns(@post_success)
     expected = @post_success
     assert_equal expected, @new_obj.add_post
   end
 
   def test_add_post_successful_no_content
-    Posterous.stubs(:post).returns(@post_success)
+    Posterous::Client.stubs(:post).returns(@post_success)
     actual = @new_obj.add_post
     assert       actual["rsp"]["post"].is_a?(Hash)
     assert_equal "ok",                actual["rsp"]["stat"]
@@ -352,14 +338,14 @@ class TestPosterous < Test::Unit::TestCase
   end
 
   def test_add_post_successful_with_title_content
-    Posterous.stubs(:post).returns(@post_title_success)
+    Posterous::Client.stubs(:post).returns(@post_title_success)
     @new_obj.title = "My Title"
     actual = @new_obj.add_post
     assert_equal "My Title",          actual["rsp"]["post"]["title"]
   end
 
   def test_add_post_invalid_site_id_fails
-    Posterous.stubs(:post).returns(@post_invalid_site)
+    Posterous::Client.stubs(:post).returns(@post_invalid_site)
     actual = @new_obj_with_bad_id.add_post
     assert_equal  "fail",             actual["rsp"]["stat"]
     assert_equal  nil,                actual["rsp"]["post"]
@@ -367,7 +353,7 @@ class TestPosterous < Test::Unit::TestCase
   end
 
   def test_add_post_no_access_fails
-    Posterous.stubs(:post).returns(@post_access_error)
+    Posterous::Client.stubs(:post).returns(@post_access_error)
     actual = @new_obj_with_invalid_id.add_post
     assert_equal "fail",              actual["rsp"]["stat"]
     assert_equal nil,                 actual["rsp"]["post"]
@@ -375,22 +361,22 @@ class TestPosterous < Test::Unit::TestCase
   end
 
   def test_add_post_invalid_account_info
-    Posterous.stubs(:post).returns(@post_bad_account)
-    actual = Posterous.new("666", "666").add_post
+    Posterous::Client.stubs(:post).returns(@post_bad_account)
+    actual = Posterous::Client.new("666", "666").add_post
     assert_equal "fail",              actual["rsp"]["stat"]
     assert_equal nil,                 actual["rsp"]["post"]
     assert_match "Invalid Posterous", actual["rsp"]["err"]["msg"]
   end
 
   def test_add_post_is_private_by_default
-    Posterous.stubs(:post).returns(@post_success)
+    Posterous::Client.stubs(:post).returns(@post_success)
     actual = @new_obj.add_post
     assert_equal    "ok",               actual["rsp"]["stat"]
     assert_no_match @private_url_path,  actual["rsp"]["post"]["longurl"]
   end
 
   def test_add_post_is_made_private
-    Posterous.stubs(:post).returns(@post_private_good)
+    Posterous::Client.stubs(:post).returns(@post_private_good)
     @new_obj.set_to :private
     actual = @new_obj.add_post
     assert_equal "ok",                  actual["rsp"]["stat"]

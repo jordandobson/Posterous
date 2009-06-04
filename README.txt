@@ -25,12 +25,12 @@ Posting images with posts, posting only images and pulling down your posts will 
 
     * You can provide just the email and password
     
-        account = Posterous.new('email_address', 'password')
+        account = Posterous::Client.new('email_address', 'password')
       
     * Or you can provide the ID as a string or integer
 
-        account = Posterous.new('email_address', 'password', 68710)
-        account = Posterous.new('email_address', 'password', '68710')
+        account = Posterous::Client.new('email_address', 'password', 68710)
+        account = Posterous::Client.new('email_address', 'password', '68710')
 
 2. Get more info about the user's account if you need it
 
@@ -44,11 +44,11 @@ Posting images with posts, posting only images and pulling down your posts will 
       
     * Get the users primary site ID (In case they have multiple sites)
     
-        account.get_primary_site
+        account.primary_site
       
     * Get a list of your sites and additional info
     
-        account.get_account_info
+        account.account_info
 
 3. Setup your post with any or all of these optional fields
 
