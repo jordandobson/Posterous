@@ -179,6 +179,11 @@ class TestPosterous < Test::Unit::TestCase
     Posterous::Client.stubs(:post).returns(@resp_ok)
     assert_equal false, @new_obj_with_bad_id.has_site?
   end
+  
+  def test_has_site_successful_that_site_id_matches_response
+    Posterous::Client.stubs(:post).returns(@resp_ok)
+    assert_equal true, @new_obj_with_id.has_site?
+  end
 
   def test_has_site_is_successful_on_multiple_when_specified
     Posterous::Client.stubs(:post).returns(@resp_ok_2_sites)

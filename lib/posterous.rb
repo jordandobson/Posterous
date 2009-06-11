@@ -3,7 +3,7 @@ require 'httparty'
 
 module Posterous
 
-  VERSION     = '0.1.5'
+  VERSION = '0.1.6'
 
   class AuthError < StandardError; end
   class TagError  < StandardError; end
@@ -23,7 +23,7 @@ module Posterous
     POST_PATH   = '/api/newpost'
     AUTH_PATH   = '/api/getsites'
   
-    include HTTParty
+    include  HTTParty
     base_uri DOMAIN
 
     attr_accessor :title, :body, :source, :source_url, :date
@@ -59,7 +59,7 @@ module Posterous
       case res["site"]
       when Hash
         return true unless @site_id
-        @site_id && @site_id == res["site"]["id"]
+        return @site_id == res["site"]["id"]
       when Array
         res["site"].each do |site|
           return true if @site_id && @site_id == site["id"]

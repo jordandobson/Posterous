@@ -1,3 +1,9 @@
+=== 0.1.6 / 2009-06-11
+
+* 1 fix
+
+  * Fixed issue where specifying site ID while only having one site cause has_site? to fail
+
 === 0.1.5 / 2009-06-03
 
 * 1 major enhancement
